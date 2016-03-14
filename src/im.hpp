@@ -27,6 +27,8 @@
 #include <vector>
 #include <stdlib.h>
 #include <stdint.h>
+#include "cmdline.h"
+#include "strutil.h"
 
 #include "x.hpp"
 
@@ -34,7 +36,7 @@ namespace maim {
 
 class IMEngine {
 public:
-                        IMEngine();
+                        IMEngine(const gengetopt_args_info& options);
                         ~IMEngine();
     int                 init();
     int                 screenshot( Window id, int x, int y, unsigned int w, unsigned int h );
@@ -43,6 +45,7 @@ public:
     int                 mask( int x = 0, int y = 0, unsigned int w = 0, unsigned int h = 0 );
     int                 save( std::string filename, std::string format = "auto" );
 private:
+    const gengetopt_args_info& options;
 };
 
 }

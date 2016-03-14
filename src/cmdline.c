@@ -68,7 +68,8 @@ const char *gengetopt_args_info_help[] = {
   "      --magpixels=INT           Sets how many pixels are displayed in the\n                                  magnification. The less pixels the bigger the\n                                  magnification.  (default=`64')",
   "      --theme=STRING            Sets the theme of the selection, using textures\n                                  from ~/.config/slop/ or /usr/share/.\n                                  (default=`none')",
   "      --shader=STRING           Sets the shader to load and use from\n                                  ~/.config/slop/ or /usr/share/.\n                                  (default=`simple')",
-  "\nExamples\n    $ # Screenshot the active window\n    $ maim -i $(xdotool getactivewindow)\n\n    $ # Prompt a transparent red selection to screenshot.\n    $ maim -s -c 1,0,0,0.6\n\n    $ # Save a dated screenshot.\n    $ maim ~/$(date +%F-%T).png\n\n    $ # Output screenshot to stdout.\n    $ maim --format png /dev/stdout\n\n",
+  "  -e, --exec=STRING             Executes the command after the screenshot was\n                                  taken. replaces $f with the filename",
+  "\nExamples\n    $ # Screenshot the active window\n    $ maim -i $(xdotool getactivewindow)\n\n    $ # Prompt a transparent red selection to screenshot.\n    $ maim -s -c 1,0,0,0.6\n\n    $ # Save a dated screenshot.\n    $ maim ~/$(date +%F-%T).png\n\n    $ # Output screenshot to stdout.\n    $ maim --format png /dev/stdout\n\n    $ # Moves the screenshot to ~/screenshots.\n    $ maim -e 'mv $f ~/screenshots'\n\n",
     0
 };
 
@@ -129,6 +130,7 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->magpixels_given = 0 ;
   args_info->theme_given = 0 ;
   args_info->shader_given = 0 ;
+  args_info->exec_given = 0 ;
 }
 
 static
@@ -181,6 +183,8 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->theme_orig = NULL;
   args_info->shader_arg = gengetopt_strdup ("simple");
   args_info->shader_orig = NULL;
+  args_info->exec_arg = NULL;
+  args_info->exec_orig = NULL;
   
 }
 
@@ -221,6 +225,7 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->magpixels_help = gengetopt_args_info_help[31] ;
   args_info->theme_help = gengetopt_args_info_help[32] ;
   args_info->shader_help = gengetopt_args_info_help[33] ;
+  args_info->exec_help = gengetopt_args_info_help[34] ;
   
 }
 
@@ -337,6 +342,8 @@ cmdline_parser_release (struct gengetopt_args_info *args_info)
   free_string_field (&(args_info->theme_orig));
   free_string_field (&(args_info->shader_arg));
   free_string_field (&(args_info->shader_orig));
+  free_string_field (&(args_info->exec_arg));
+  free_string_field (&(args_info->exec_orig));
   
   
   for (i = 0; i < args_info->inputs_num; ++i)
@@ -477,6 +484,8 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "theme", args_info->theme_orig, 0);
   if (args_info->shader_given)
     write_into_file(outfile, "shader", args_info->shader_orig, 0);
+  if (args_info->exec_given)
+    write_into_file(outfile, "exec", args_info->exec_orig, 0);
   
 
   i = EXIT_SUCCESS;
@@ -778,10 +787,11 @@ cmdline_parser_internal (
         { "magpixels",	1, NULL, 0 },
         { "theme",	1, NULL, 0 },
         { "shader",	1, NULL, 0 },
+        { "exec",	1, NULL, 'e' },
         { 0,  0, 0, 0 }
       };
 
-      c = getopt_long (argc, argv, "Vsx:y:w:h:g:d:i:m:b:p:t:c:nl", long_options, &option_index);
+      c = getopt_long (argc, argv, "Vsx:y:w:h:g:d:i:m:b:p:t:c:nle:", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
 
@@ -962,6 +972,18 @@ cmdline_parser_internal (
           if (update_arg((void *)&(args_info->highlight_flag), 0, &(args_info->highlight_given),
               &(local_args_info.highlight_given), optarg, 0, 0, ARG_FLAG,
               check_ambiguity, override, 1, 0, "highlight", 'l',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 'e':	/* Executes the command after the screenshot was taken. replaces $f with the filename.  */
+        
+        
+          if (update_arg( (void *)&(args_info->exec_arg), 
+               &(args_info->exec_orig), &(args_info->exec_given),
+              &(local_args_info.exec_given), optarg, 0, 0, ARG_STRING,
+              check_ambiguity, override, 0, 0,
+              "exec", 'e',
               additional_error))
             goto failure;
         

@@ -120,6 +120,9 @@ struct gengetopt_args_info
   char * shader_arg;	/**< @brief Sets the shader to load and use from ~/.config/slop/ or /usr/share/. (default='simple').  */
   char * shader_orig;	/**< @brief Sets the shader to load and use from ~/.config/slop/ or /usr/share/. original value given at command line.  */
   const char *shader_help; /**< @brief Sets the shader to load and use from ~/.config/slop/ or /usr/share/. help description.  */
+  char * exec_arg;	/**< @brief Executes the command after the screenshot was taken. replaces $f with the filename.  */
+  char * exec_orig;	/**< @brief Executes the command after the screenshot was taken. replaces $f with the filename original value given at command line.  */
+  const char *exec_help; /**< @brief Executes the command after the screenshot was taken. replaces $f with the filename help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
@@ -153,6 +156,7 @@ struct gengetopt_args_info
   unsigned int magpixels_given ;	/**< @brief Whether magpixels was given.  */
   unsigned int theme_given ;	/**< @brief Whether theme was given.  */
   unsigned int shader_given ;	/**< @brief Whether shader was given.  */
+  unsigned int exec_given ;	/**< @brief Whether exec was given.  */
 
   char **inputs ; /**< @brief unamed options (options without names) */
   unsigned inputs_num ; /**< @brief unamed options number */

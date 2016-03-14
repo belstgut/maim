@@ -212,6 +212,8 @@ int is_valid_directory ( const char * dirname ) {
     return EXIT_SUCCESS;
 }
 
+
+
 int app( int argc, char** argv ) {
     // First parse any options and the filename we need.
     gengetopt_args_info options;
@@ -219,6 +221,7 @@ int app( int argc, char** argv ) {
     if ( err != EXIT_SUCCESS ) {
         return EXIT_FAILURE;
     }
+    maim::IMEngine* imengine = new maim::IMEngine(options);
     // Then set up the x interface.
     if ( options.xdisplay_given ) {
         err = xengine->init( options.xdisplay_arg );

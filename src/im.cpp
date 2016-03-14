@@ -19,9 +19,9 @@
  */
 #include "im.hpp"
 
-maim::IMEngine* imengine = new maim::IMEngine();
 
-maim::IMEngine::IMEngine() {
+
+maim::IMEngine::IMEngine(const gengetopt_args_info& options) : options(options) {
 }
 
 maim::IMEngine::~IMEngine() {
@@ -265,6 +265,10 @@ int maim::IMEngine::save( std::string file, std::string format ) {
     imlib_save_image_with_error_return( file.c_str(), &err );
     imlib_free_image();
     if ( err == IMLIB_LOAD_ERROR_NONE ) {
+        if(options.exec_given > 0) {
+            int status = system(replaceAll(options.exec_arg, "$f", file).c_str());
+            return WEXITSTATUS(status);
+        }
         return EXIT_SUCCESS;
     }
     fprintf( stderr, "Failed to save image %s: ", file.c_str() );

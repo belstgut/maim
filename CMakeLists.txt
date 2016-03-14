@@ -90,11 +90,11 @@ configure_file( "src/cmdline.in" "${CMAKE_SOURCE_DIR}/src/cmdline.h" )
 add_custom_target( README.md "./generateReadme.sh" DEPENDS "maim" )
 
 # Sources
-set( source
-     src/cmdline.c
-     src/im.cpp
-     src/x.cpp
-     src/main.cpp )
+file(GLOB SRC_FILES
+     src/*.c
+     src/*.cpp
+     src/*.hpp
+     src/*.h)
 
 # Obtain library paths and make sure they exist.
 set( CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_SOURCE_DIR}/cmakemodules" )
@@ -113,7 +113,10 @@ include_directories( "${IMLIB2_INCLUDE_DIR}"
                      "${XFIXES_INCLUDE_DIR}" )
 
 # Executable
-add_executable( "${BIN_TARGET}" ${source} )
+add_executable( "${BIN_TARGET}" ${SRC_FILES} )
+
+# C++11
+target_compile_features(${BIN_TARGET} PRIVATE cxx_range_for)
 
 # Libraries
 target_link_libraries( "${BIN_TARGET}"

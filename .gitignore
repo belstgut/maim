@@ -1,2 +1,4 @@
 # These files are ignored since cmake generates them from cmdline.in
 src/cmdline.h
+CMakeLists.txt.user
+build/

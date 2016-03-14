@@ -152,6 +152,10 @@ option "shader" - "Sets the shader to load and use from ~/.config/slop/ or /usr/
     default="simple"
     optional
 
+option "exec" e "Executes the command after the screenshot was taken. replaces $f with the filename"
+    string
+    optional
+
 text "\nExamples\n"
 text "    $ # Screenshot the active window\n"
 text "    $ maim -i $(xdotool getactivewindow)\n"
@@ -164,4 +168,7 @@ text "    $ maim ~/$(date +%F-%T).png\n"
 text "\n"
 text "    $ # Output screenshot to stdout.\n"
 text "    $ maim --format png /dev/stdout\n"
+text "\n"
+text "    $ # Moves the screenshot to ~/screenshots.\n"
+text "    $ maim -e 'mv $f ~/screenshots'\n"
 text "\n"
